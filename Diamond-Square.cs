@@ -136,6 +136,9 @@ public static class DiamondSquare
 	
 	private static void CalculateDiamond(int x0, int x1, int y0, int y1)
 	{
+		int width = x1-x0;
+		int height = y1-y0;
+
 		int mx = GetMidpoint(x0, x1);
 		int my = GetMidpoint(y0, y1);
 		float tl = heightmap[x0, y0];
@@ -144,9 +147,41 @@ public static class DiamondSquare
 		float br = heightmap[x1, y1];
 		float centre = heightmap[mx, my];
 
+		float lCentre;
+		if((mx-width) < 0)
+			lCentre = heightmap[(edgeLength-1)-(width/2), my];
+		else
+			lCentre = heightmap[mx-width, my];
+
+		float rCentre;
+		if((mx+width) > (edgeLength-1))
+			rCentre = heightmap[(width/2), my];
+		else
+			rCentre = heightmap[mx+width, my];
+
+		float tCentre;
+		if((my-height) < 0)
+			tCentre = heightmap[mx, (edgeLength-1)-(height/2)];
+		else
+			tCentre = heightmap[mx, my-height];
+
+		float bCentre;
+		if((my+height) > (edgeLength-1))
+			bCentre = heightmap[mx, (height/2)];
+		else
+			bCentre = heightmap[mx, my+height];
+
+		
+		heightmap[x0, my] = GetAverageOf4(tl, bl, centre, lCentre) + GetOffset();
+		heightmap[x1, my] = GetAverageOf4(tr, br, centre, rCentre) + GetOffset();
+		heightmap[mx, y0] = GetAverageOf4(tl, tr, centre, tCentre) + GetOffset();
+		heightmap[mx, y1] = GetAverageOf4(bl, br, centre, bCentre) + GetOffset();
+		
+		/* 
 		heightmap[x0, my] = GetAverageOf3(tl, bl, centre) + GetOffset();
 		heightmap[x1, my] = GetAverageOf3(tr, br, centre) + GetOffset();
 		heightmap[mx, y0] = GetAverageOf3(tl, tr, centre) + GetOffset();
 		heightmap[mx, y1] = GetAverageOf3(bl, br, centre) + GetOffset();
+		*/
 	}
 }
